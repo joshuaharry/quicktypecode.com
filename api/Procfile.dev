@@ -1,2 +1,2 @@
 api: bin/rails server
-web: cd ../gui && npm run dev
+web: npm run dev --prefix ../gui
