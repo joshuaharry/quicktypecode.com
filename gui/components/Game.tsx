@@ -1,4 +1,11 @@
 import React from "react";
+import ReactSyntaxHighlighter from "react-syntax-highlighter";
+import a11y from "react-syntax-highlighter/dist/cjs/styles/hljs/a11y-dark";
+
+const codeString = `def hello
+  "Hello, world!"
+end
+`;
 
 const Game = () => {
   const ref = React.useRef<null | HTMLTextAreaElement>(null);
@@ -10,12 +17,16 @@ const Game = () => {
         onChange={(e) => console.log(e)}
       />
       <div
-        className="absolute text-white w-full h-full z-10 flex m-4"
+        className="absolute text-white w-full h-full z-10 flex"
         onClick={() => ref.current?.focus()}
       >
-        <pre>
-          <code>Code goes here...</code>
-        </pre>
+        <ReactSyntaxHighlighter
+          language="ruby"
+          style={a11y}
+          customStyle={{ width: "100%", height: "100%" }}
+        >
+          {codeString}
+        </ReactSyntaxHighlighter>
       </div>
     </div>
   );
