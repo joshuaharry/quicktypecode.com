@@ -1,0 +1,4 @@
+api: bin/rails server
+web: cd ../gui && npm run dev
+api-test: watchexec -e rb ./bin/rails test
+web-test: cd ../gui && npm run test:watch

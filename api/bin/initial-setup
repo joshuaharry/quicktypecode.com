@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+PROJECT_ROOT = File.dirname File.dirname File.dirname File.expand_path __FILE__
+
+Dir.chdir(File.join(PROJECT_ROOT, 'api')) do
+  system('bundle install')
+end
+
+Dir.chdir(File.join(PROJECT_ROOT, 'gui')) do
+  system('npm install')
+end
+
+puts "\n### Initial setup complete ###\n"

@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+PROJECT_ROOT = File.dirname File.dirname File.dirname File.expand_path __FILE__
+
+# See https://stackoverflow.com/questions/2108727/which-in-ruby-checking-if-program-exists-in-path-from-ruby
+# Cross-platform way of finding an executable in the $PATH.
+#
+#   which('ruby') #=> /usr/bin/ruby
+def which(cmd)
+  exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exts.each do |ext|
+      exe = File.join(path, "#{cmd}#{ext}")
+      return exe if File.executable?(exe) && !File.directory?(exe)
+    end
+  end
+  nil
+end
+
+unless which('watchexec')
+  puts 'Please install the program watchexec.'
+  puts 'https://github.com/watchexec/watchexec'
+  exit(1)
+end
+
+Dir.chdir(File.join(PROJECT_ROOT, 'api')) do
+  system('foreman start -f Procfile.all')
+end

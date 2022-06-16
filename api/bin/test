@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+PROJECT_ROOT = File.dirname File.dirname File.dirname File.expand_path __FILE__
+
+Dir.chdir(File.join(PROJECT_ROOT, 'api')) do
+  exit(1) unless system('./bin/rails test')
+end
+
+Dir.chdir(File.join(PROJECT_ROOT, 'gui')) do
+  exit(1) unless system('npm test')
+end
