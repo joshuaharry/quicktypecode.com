@@ -3,9 +3,8 @@ import ReactSyntaxHighlighter from "react-syntax-highlighter";
 import a11y from "react-syntax-highlighter/dist/cjs/styles/hljs/a11y-dark";
 
 const codeString = `def hello
-  "Hello, world!"
-end
-`;
+  puts "Hello, world!"
+end`;
 
 const GameShell = () => {
   const ref = React.useRef<null | HTMLTextAreaElement>(null);
@@ -25,6 +24,7 @@ const GameShell = () => {
           language="ruby"
           style={a11y}
           customStyle={{ width: "100%", height: "100%" }}
+	  showLineNumbers
         >
           {codeString}
         </ReactSyntaxHighlighter>
