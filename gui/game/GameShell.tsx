@@ -1,6 +1,9 @@
 import React from "react";
-import ReactSyntaxHighlighter from "react-syntax-highlighter";
+import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
+import ruby from "react-syntax-highlighter/dist/cjs/languages/hljs/ruby";
 import a11y from "react-syntax-highlighter/dist/cjs/styles/hljs/a11y-dark";
+
+SyntaxHighlighter.registerLanguage("ruby", ruby);
 
 const codeString = `def hello
   puts "Hello, world!"
@@ -20,14 +23,14 @@ const GameShell = () => {
         className="absolute text-white w-full h-full z-10 flex"
         onClick={() => ref.current?.focus()}
       >
-        <ReactSyntaxHighlighter
+        <SyntaxHighlighter
           language="ruby"
           style={a11y}
           customStyle={{ width: "100%", height: "100%" }}
-	  showLineNumbers
+          showLineNumbers
         >
           {codeString}
-        </ReactSyntaxHighlighter>
+        </SyntaxHighlighter>
       </div>
     </div>
   );
