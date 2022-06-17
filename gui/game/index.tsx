@@ -1,3 +1,4 @@
+import React from "react";
 import GameContext, { GameProps } from "./GameContext";
 import GameShell from "./GameShell";
 

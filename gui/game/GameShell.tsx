@@ -1,5 +1,5 @@
 import React from "react";
-import GameTokens from './GameTokens';
+import GameTokens from "./GameTokens";
 
 const GameShell = () => {
   const ref = React.useRef<null | HTMLTextAreaElement>(null);
