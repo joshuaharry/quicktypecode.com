@@ -2,7 +2,7 @@
 // of the app are wired together, you probably won't need to change anything
 // in this file.
 import React from "react";
-import { init, reduce, Game, Action } from "./gameLogic";
+import { init, reduce, Game, Action, Language, tokenize } from "./gameLogic";
 
 const GameStateContext = React.createContext<Game | null>(null);
 
@@ -27,18 +27,22 @@ export const useDispatch = (): React.Dispatch<Action> => {
 };
 
 export interface GameProps {
-  language: string;
+  language: Language;
   code: string;
 }
 
 const GameProvider: React.FC<
   GameProps & { children: React.ReactNode }
 > = (props) => {
-  const { children, language, code } = props;
+  const { children, code, language } = props;
+  const tokens = React.useMemo(() => {
+    return tokenize(code, language);
+  }, [language, code]);
   const [game, dispatch] = React.useReducer(reduce, {
     ...init,
     language,
     code,
+    tokens,
   });
   return (
     <GameStateContext.Provider value={game}>

@@ -14,7 +14,7 @@ type Syntax =
   | "COLON"
   | "SEMICOLON";
 
-type Language = "" | "RUBY" | "PYTHON" | "C";
+export type Language = "RUBY" | "PYTHON" | "C";
 
 export interface Token {
   syntax: Syntax;
@@ -22,6 +22,8 @@ export interface Token {
 }
 
 export type TokenMatrix = Array<Array<Token>>;
+
+type Lexer = (line: string) => Array<Token>;
 
 export interface Game {
   code: string;
@@ -36,7 +38,7 @@ export interface Game {
 
 export const init: Game = {
   code: "",
-  language: "",
+  language: "RUBY",
   tokens: [],
   gameFinished: false,
   lastTyped: NaN,
@@ -45,7 +47,26 @@ export const init: Game = {
   currentCharacter: 0,
 };
 
-export const tokenize = (code: string, language: Language): TokenMatrix => {};
+const lexers: Record<Language, Lexer> = {
+  RUBY() {
+    return [];
+  },
+  C() {
+    return [];
+  },
+  PYTHON() {
+    return [];
+  },
+};
+
+export const tokenize = (code: string, language: Language): TokenMatrix => {
+  const out: TokenMatrix = [];
+  const lines = code.split("\n");
+  for (const line of lines) {
+    out.push([]);
+  }
+  return out;
+};
 
 export type Action = {
   type: "INITIALIZE_GAME";

@@ -92,7 +92,6 @@ end`;
         { syntax: "WHITESPACE", text: " " },
         { syntax: "IDENTIFIER", text: "argv" },
         { syntax: "RIGHT_PAREN", text: ")" },
-
         { syntax: "WHITESPACE", text: " " },
         { syntax: "RIGHT_BRACKET", text: "{" },
         { syntax: "NEWLINE", text: "\n" },
