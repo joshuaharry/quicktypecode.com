@@ -1,6 +1,35 @@
-import { init, reduce, tokenize, TokenMatrix } from "./gameLogic";
+import { init, reduce, tokenize, TokenMatrix, PATTERNS } from "./gameLogic";
+
+const matchString = (check: string) => {
+  const res = PATTERNS["STRING"].exec(check);
+  PATTERNS["STRING"].lastIndex = 0;
+  return res;
+};
 
 describe("Tokenization", () => {
+  test("Strings can be single quotes, double quotes, or back quotes", () => {
+    const match = (check: string) => {
+      const res = PATTERNS["STRING"].exec(check);
+      PATTERNS["STRING"].lastIndex = 0;
+      return res;
+    };
+    expect(matchString(`"This is a test"`)).not.toBe(null);
+    expect(matchString(`'This is a test'`)).not.toBe(null);
+    expect(matchString("`This is a test`")).not.toBe(null);
+  });
+  test("Strings can be escpaed without issue", () => {
+    const theString = "This is a \" test";
+    const match = matchString(theString);
+    if (match === null) {
+      throw new Error('Expected to match escape character');
+    }
+    expect(match[0]).toEqual(theString);
+  });
+  test("Fails on an illegal character", () => {
+    const code = `42 – 13;`;
+    const language = "RUBY";
+    expect(() => tokenize(code, language)).toThrow();
+  });
   test("Works on a ruby program", () => {
     const code = `def hello
   puts "Hello, world!"
@@ -97,7 +126,7 @@ end`;
         { syntax: "WHITESPACE", text: "  " },
         { syntax: "IDENTIFIER", text: "printf" },
         { syntax: "LEFT_PAREN", text: "(" },
-        { syntax: "STRING", text: "\"Hello, world!\\n\"" },
+        { syntax: "STRING", text: '"Hello, world!\\n"' },
         { syntax: "RIGHT_PAREN", text: ")" },
         { syntax: "SEMICOLON", text: ";" },
         { syntax: "NEWLINE", text: "\n" },

@@ -1,13 +1,12 @@
 import produce from "immer";
 
-const PATTERNS = {
-  IDENTIFIER: /^[a-zA-Z_\*\?]*/g,
-  WHITESPACE: /^\s*/g,
-  NUMBER: /^\d*/g,
+export const PATTERNS = {
+  IDENTIFIER: /^[a-zA-Z_\*\?]+/g,
+  WHITESPACE: /^\s+/g,
+  NUMBER: /^\d+/g,
   // See https://stackoverflow.com/questions/249791/regex-for-quoted-string-with-escaping-quotes
-  STRING: /^"(?:[^"\\]|\\.)*"/g,
-  // Some editors might get confused by the nested quotes, so we fix the
-  // syntax highlighting with this comment: "
+  STRING: /^(["'`])(?:[^\1\\]|\\.)*?\1/g,
+  // "
   NEWLINE: /^\n/g,
   LEFT_BRACKET: /^\{/g,
   RIGHT_BRACKET: /^\}/g,
@@ -16,7 +15,7 @@ const PATTERNS = {
   SEMICOLON: /^;/g,
   LEFT_PAREN: /^\(/g,
   RIGHT_PAREN: /^\)/g,
-};
+} as const;
 
 type Syntax = keyof typeof PATTERNS;
 
