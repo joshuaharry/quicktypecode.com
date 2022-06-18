@@ -70,8 +70,6 @@ export const tokenize = (code: string, language: Language): TokenMatrix => {
 
 export type TokenMatrix = Array<Array<Token>>;
 
-type Lexer = (line: string) => Array<Token>;
-
 export interface Game {
   code: string;
   language: Language;
