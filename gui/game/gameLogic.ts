@@ -5,34 +5,35 @@ interface Execable {
   lastIndex: number;
 }
 
+const STRING = {
+  exec(str: string): null | [string, ...any] {
+    const delimiter: string = str[0];
+    if (delimiter !== `'` && delimiter !== `"` && delimiter !== "`")
+      return null;
+    let i = 1;
+    for (; i < str.length; ++i) {
+      const check = str[i];
+      if (check === "\\") {
+        i += 1;
+      } else if (check === delimiter) {
+        break;
+      }
+    }
+    if (i === str.length) {
+      throw new Error(`LEXING ERROR: Unterminated string in ${str}`);
+    }
+    this.lastIndex = i + 1;
+    return [str.substring(0, this.lastIndex)];
+  },
+  lastIndex: 0,
+};
+
+STRING.exec = STRING.exec.bind(STRING);
+
 export const PATTERNS = {
   IDENTIFIER: /^[a-zA-Z_\*\?]+/g,
   WHITESPACE: /^\s+/g,
   NUMBER: /^\d+/g,
-  // See https://stackoverflow.com/questions/249791/regex-for-quoted-string-with-escaping-quotes
-  STRING: {
-    exec(str: string): null | [string, ...any] {
-      const delimiter: string = str[0];
-      if (delimiter !== `'` && delimiter !== `"` && delimiter !== "`")
-        return null;
-      let i = 1;
-      for (; i < str.length; ++i) {
-	const check = str[i];
-	if (check === "\\") {
-	  i += 1;
-	} else if (check === delimiter) {
-	  break
-	}
-      }
-      if (i === str.length) {
-        throw new Error(`LEXING ERROR: Unterminated string in ${str}`);
-      }
-      this.lastIndex = i + 1;
-      return [str.substring(0, this.lastIndex)];
-    },
-    lastIndex: 0,
-  },
-
   NEWLINE: /^\n/g,
   LEFT_BRACKET: /^\{/g,
   RIGHT_BRACKET: /^\}/g,
@@ -41,9 +42,8 @@ export const PATTERNS = {
   SEMICOLON: /^;/g,
   LEFT_PAREN: /^\(/g,
   RIGHT_PAREN: /^\)/g,
-};
-
-PATTERNS.STRING.exec.bind(PATTERNS.STRING);
+  STRING,
+} as const;
 
 type Syntax = keyof typeof PATTERNS;
 
