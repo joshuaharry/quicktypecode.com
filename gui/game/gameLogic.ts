@@ -58,9 +58,9 @@ export const tokenize = (code: string, language: Language): TokenMatrix => {
       line = line.slice(pattern[1].lastIndex);
       pattern[1].lastIndex = 0;
     }
-    tokens.push({ syntax: 'NEWLINE', text: '\n' });
+    tokens.push({ syntax: "NEWLINE", text: "\n" });
     out.push(tokens);
-a  }
+  }
   return out;
 };
 
