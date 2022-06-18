@@ -29,14 +29,14 @@ export interface Token {
   text: string;
 }
 
+export type TokenMatrix = Array<Array<Token>>;
+
 export const tokenize = (code: string, language: Language): TokenMatrix => {
   const out: TokenMatrix = [];
   const lines = code.split("\n");
   for (let line of lines) {
     const tokens: Array<Token> = [];
-    let count = 0;
     while (line !== "") {
-      ++count;
       let match: string | null = null;
       let pattern: [Syntax, RegExp] | null = null;
       for (const entry of PATTERN_ENTRIES) {
@@ -57,18 +57,12 @@ export const tokenize = (code: string, language: Language): TokenMatrix => {
       tokens.push({ syntax: pattern[0], text: match });
       line = line.slice(pattern[1].lastIndex);
       pattern[1].lastIndex = 0;
-      if (count > 1000) {
-	console.log(tokens);
-	throw new Error(line);
-      }
     }
     tokens.push({ syntax: 'NEWLINE', text: '\n' });
     out.push(tokens);
-  }
+a  }
   return out;
 };
-
-export type TokenMatrix = Array<Array<Token>>;
 
 export interface Game {
   code: string;
