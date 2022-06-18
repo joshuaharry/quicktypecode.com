@@ -12,11 +12,12 @@ end`;
         { syntax: "IDENTIFIER", text: "def" },
         { syntax: "WHITESPACE", text: " " },
         { syntax: "IDENTIFIER", text: "hello" },
-        { syntax: "NEWLINE", text: "\n︎" },
+        { syntax: "NEWLINE", text: "\n" },
       ],
       [
         { syntax: "WHITESPACE", text: "  " },
         { syntax: "IDENTIFIER", text: "puts" },
+        { syntax: "WHITESPACE", text: " " },
         { syntax: "STRING", text: '"Hello, world!"' },
         { syntax: "NEWLINE", text: "\n" },
       ],
@@ -25,14 +26,13 @@ end`;
         { syntax: "NEWLINE", text: "\n" },
       ],
     ];
-    expect(actual).toEqual(expected);
+    expect(expected).toEqual(actual);
   });
   test("Works on a python program", () => {
     const language = "PYTHON";
     const code = `def this_is_a_test(foo, bar):
     print("Hello, world!")
-    print("Python is cool!")
-    `;
+    print("Python is cool!")`;
     const actual = tokenize(code, language);
     const expected: TokenMatrix = [
       [
@@ -49,21 +49,19 @@ end`;
         { syntax: "NEWLINE", text: "\n" },
       ],
       [
-        { syntax: "WHITESPACE", text: "  " },
+        { syntax: "WHITESPACE", text: "    " },
         { syntax: "IDENTIFIER", text: "print" },
         { syntax: "LEFT_PAREN", text: "(" },
         { syntax: "STRING", text: '"Hello, world!"' },
         { syntax: "RIGHT_PAREN", text: ")" },
-        { syntax: "COLON", text: ":" },
         { syntax: "NEWLINE", text: "\n" },
       ],
       [
-        { syntax: "WHITESPACE", text: "  " },
+        { syntax: "WHITESPACE", text: "    " },
         { syntax: "IDENTIFIER", text: "print" },
         { syntax: "LEFT_PAREN", text: "(" },
         { syntax: "STRING", text: '"Python is cool!"' },
         { syntax: "RIGHT_PAREN", text: ")" },
-        { syntax: "COLON", text: ":" },
         { syntax: "NEWLINE", text: "\n" },
       ],
     ];
@@ -72,10 +70,9 @@ end`;
   test("Works on a C program", () => {
     const language = "C";
     const code = `int main(int argc, char** argv) {
-  printf("Hello, world!\n");
+  printf("Hello, world!\\n");
   return 0;
-}
-    `;
+}`;
     const actual = tokenize(code, language);
     const expected: TokenMatrix = [
       [
@@ -93,14 +90,14 @@ end`;
         { syntax: "IDENTIFIER", text: "argv" },
         { syntax: "RIGHT_PAREN", text: ")" },
         { syntax: "WHITESPACE", text: " " },
-        { syntax: "RIGHT_BRACKET", text: "{" },
+        { syntax: "LEFT_BRACKET", text: "{" },
         { syntax: "NEWLINE", text: "\n" },
       ],
       [
         { syntax: "WHITESPACE", text: "  " },
         { syntax: "IDENTIFIER", text: "printf" },
         { syntax: "LEFT_PAREN", text: "(" },
-        { syntax: "STRING", text: '"Hello, world!"' },
+        { syntax: "STRING", text: "\"Hello, world!\\n\"" },
         { syntax: "RIGHT_PAREN", text: ")" },
         { syntax: "SEMICOLON", text: ";" },
         { syntax: "NEWLINE", text: "\n" },
@@ -109,9 +106,9 @@ end`;
         { syntax: "WHITESPACE", text: "  " },
         { syntax: "IDENTIFIER", text: "return" },
         { syntax: "WHITESPACE", text: " " },
-        { syntax: "IDENTIFIER", text: "0" },
+        { syntax: "NUMBER", text: "0" },
         { syntax: "SEMICOLON", text: ";" },
-	{ syntax: "NEWLINE", text: "\n" },
+        { syntax: "NEWLINE", text: "\n" },
       ],
       [
         { syntax: "RIGHT_BRACKET", text: "}" },
