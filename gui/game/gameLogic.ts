@@ -1,12 +1,38 @@
 import produce from "immer";
 
+interface Execable {
+  exec: (input: string) => [string, ...any];
+  lastIndex: number;
+}
+
 export const PATTERNS = {
   IDENTIFIER: /^[a-zA-Z_\*\?]+/g,
   WHITESPACE: /^\s+/g,
   NUMBER: /^\d+/g,
   // See https://stackoverflow.com/questions/249791/regex-for-quoted-string-with-escaping-quotes
-  STRING: /^(["'`])(?:[^\1\\]|\\.)*?\1/g,
-  // "
+  STRING: {
+    exec(str: string): null | [string, ...any] {
+      const delimiter: string = str[0];
+      if (delimiter !== `'` && delimiter !== `"` && delimiter !== "`")
+        return null;
+      let i = 1;
+      for (; i < str.length; ++i) {
+	const check = str[i];
+	if (check === "\\") {
+	  i += 1;
+	} else if (check === delimiter) {
+	  break
+	}
+      }
+      if (i === str.length) {
+        throw new Error(`LEXING ERROR: Unterminated string in ${str}`);
+      }
+      this.lastIndex = i + 1;
+      return [str.substring(0, this.lastIndex)];
+    },
+    lastIndex: 0,
+  },
+
   NEWLINE: /^\n/g,
   LEFT_BRACKET: /^\{/g,
   RIGHT_BRACKET: /^\}/g,
@@ -15,11 +41,13 @@ export const PATTERNS = {
   SEMICOLON: /^;/g,
   LEFT_PAREN: /^\(/g,
   RIGHT_PAREN: /^\)/g,
-} as const;
+};
+
+PATTERNS.STRING.exec.bind(PATTERNS.STRING);
 
 type Syntax = keyof typeof PATTERNS;
 
-const PATTERN_ENTRIES = Object.entries(PATTERNS) as Array<[Syntax, RegExp]>;
+const PATTERN_ENTRIES = Object.entries(PATTERNS) as Array<[Syntax, Execable]>;
 
 export type Language = "RUBY" | "PYTHON" | "C";
 
@@ -37,7 +65,7 @@ export const tokenize = (code: string, language: Language): TokenMatrix => {
     const tokens: Array<Token> = [];
     while (line !== "") {
       let match: string | null = null;
-      let pattern: [Syntax, RegExp] | null = null;
+      let pattern: [Syntax, Execable] | null = null;
       for (const entry of PATTERN_ENTRIES) {
         const patternExp = entry[1];
         const res = patternExp.exec(line);

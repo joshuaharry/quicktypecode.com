@@ -8,22 +8,35 @@ const matchString = (check: string) => {
 
 describe("Tokenization", () => {
   test("Strings can be single quotes, double quotes, or back quotes", () => {
-    const match = (check: string) => {
-      const res = PATTERNS["STRING"].exec(check);
-      PATTERNS["STRING"].lastIndex = 0;
-      return res;
-    };
     expect(matchString(`"This is a test"`)).not.toBe(null);
     expect(matchString(`'This is a test'`)).not.toBe(null);
     expect(matchString("`This is a test`")).not.toBe(null);
   });
-  test("Strings can be escpaed without issue", () => {
-    const theString = "This is a \" test";
+  test("Strings can be escpaed using one escape character", () => {
+    const theString = `"This is a \\" test"`;
     const match = matchString(theString);
     if (match === null) {
       throw new Error('Expected to match escape character');
     }
     expect(match[0]).toEqual(theString);
+  });
+  test("Strings can be escpaed using lots of escape characters", () => {
+    const theString = `"This is a \\\\\\\\\\\" test"`;
+    const match = matchString(theString);
+    if (match === null) {
+      throw new Error('Expected to match escape character');
+    }
+    expect(match[0]).toEqual(theString);
+  });
+  test("We break appropriately if there are two strings", () => {
+    const first = "\"First \\\\\\\\\\\" test\"";
+    const second = "\"Second \\\\\\\\\\\" test\""
+    const theString = `${first} + ${second}`
+    const match = matchString(theString);
+    if (match === null) {
+      throw new Error('Expected to match escape character');
+    }
+    expect(match[0]).toEqual(first);
   });
   test("Fails on an illegal character", () => {
     const code = `42 – 13;`;
