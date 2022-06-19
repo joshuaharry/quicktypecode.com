@@ -38,6 +38,7 @@ export let reduce = (prev: Game, action: Action): Game => {
     case "BLINK_REQUEST": {
       return produce(prev, (draft) => {
         const neverTyped = Number.isNaN(draft.startedTyping);
+	if (neverTyped) return;
         const havePausedTyping =
           Math.abs(action.payload - draft.lastTyped) > 600;
         if (neverTyped || havePausedTyping) {

@@ -23,11 +23,9 @@ const simulateTyping = (characters: string): Game => {
 };
 
 describe("Our reducer", () => {
-  test("If the user hasn't typed yet, we toggle the cursor on and off", () => {
+  test("If the user hasn't typed yet, the cursor is lit", () => {
     const first = reduce(init, { type: "BLINK_REQUEST", payload: 0 });
-    expect(first.cursorIsLit).toBe(false);
-    const second = reduce(first, { type: "BLINK_REQUEST", payload: 0 });
-    expect(second.cursorIsLit).toBe(true);
+    expect(first.cursorIsLit).toBe(true);
   });
   test("If the gap between when the user last typed and now is too small, we keep the cursor lit.", () => {
     const withTyped = { ...init, startedTyping: 30, lastTyped: 50 };
@@ -35,20 +33,18 @@ describe("Our reducer", () => {
     expect(res.cursorIsLit).toBe(true);
   });
   test("If the gap between when the user last typed and now is big enough, we keep toggle.", () => {
-    const withTyped = { ...init, lastTyped: 50 };
+    const withTyped = { ...EXAMPLE, lastTyped: 50, startedTyping: 0 };
     const first = reduce(withTyped, { type: "BLINK_REQUEST", payload: 100000 });
     expect(first.cursorIsLit).toBe(false);
     const second = reduce(first, { type: "BLINK_REQUEST", payload: 100000 });
     expect(second.cursorIsLit).toBe(true);
   });
   test("Typing causes the cursor to be lit", () => {
-    const first = reduce(EXAMPLE, { type: "BLINK_REQUEST", payload: 0 });
-    expect(first.cursorIsLit).toBe(false);
-    const res = reduce(EXAMPLE, {
-      type: "USER_TYPED",
-      payload: { character: "c", time: 0 },
-    });
-    expect(res.cursorIsLit).toBe(true);
+    const first = reduce(
+      { ...EXAMPLE, cursorIsLit: false },
+      { type: "USER_TYPED", payload: { character: "c", time: 1000 } }
+    );
+    expect(first.cursorIsLit).toBe(true);
   });
   test("Typing updates lastTyped", () => {
     const res = reduce(EXAMPLE, {
@@ -95,7 +91,7 @@ describe("Our reducer", () => {
     expect(res.currentToken).toBe(1); // We skip the whitespace at the beginning of the line
     expect(res.currentLine).toBe(1);
   });
-  test("When we get to the end, gameFinished becomes true", () => {
+  test("When we get to the end and hit return, gameFinished becomes true", () => {
     const res = simulateTyping(TEST_CODE + "\n");
     expect(res.gameFinished).toBe(true);
   });
