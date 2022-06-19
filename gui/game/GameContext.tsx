@@ -2,7 +2,9 @@
 // of the app are wired together, you probably won't need to change anything
 // in this file.
 import React from "react";
-import { init, reduce, Game, Action, Language, tokenize } from "./gameLogic";
+import { init, reduce, Game, Action } from "./gameLogic";
+import { tokenize } from './tokenize';
+import { Language } from './supportedLanguages';
 
 const GameStateContext = React.createContext<Game | null>(null);
 
