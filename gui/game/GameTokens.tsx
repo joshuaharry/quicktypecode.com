@@ -1,5 +1,5 @@
 import React from "react";
-import { useGame } from "./GameContext";
+import { useGame, useDispatch } from "./GameContext";
 import { Token } from "./tokenize";
 
 interface LineOfCodeProps {
@@ -14,20 +14,99 @@ interface TokenProps {
 }
 
 export const splitAtNum = (str: string, num: number) => {
-  // FILL ME IN
+  return [str.substring(0, num), str[num], str.substring(num + 1, str.length)];
 };
 
-const TokenInProgress: React.FC<TokenProps> = (props) => {
-  const { token } = props;
-  const { currentCharacter } = useGame();
+const useBlinking = () => {
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch({ type: "BLINK_REQUEST", payload: Date.now() });
+    }, 500);
+    return () => clearInterval(interval);
+  }, [dispatch]);
+};
+
+const NewlineToken = () => {
+  const { cursorIsLit } = useGame();
   return (
     <>
-      <span className="code">{token.text}</span>
+      <span className={`code ${cursorIsLit ? "lit" : ""}`}>↩︎</span>
       <style jsx>
         {`
           .code {
             font-family: monospace;
             font-size: 16px;
+            margin-left: 8px;
+          }
+          .lit {
+            background-color: white;
+            color: black;
+          }
+        `}
+      </style>
+    </>
+  );
+};
+
+const WhitespaceToken: React.FC<TokenProps> = (props) => {
+  const { token } = props;
+  const { cursorIsLit } = useGame();
+  return (
+    <>
+      <span className={`code WHITESPACE ${cursorIsLit ? "lit" : ""}`}>
+        {token.text}
+      </span>
+      <style jsx>
+        {`
+          .code {
+            font-family: monospace;
+            font-size: 16px;
+          }
+          .lit {
+            background-color: white;
+            color: black;
+          }
+          .WHITESPACE {
+            padding-right: ${token.text.length * 8.5}px;
+          }
+        `}
+      </style>
+    </>
+  );
+};
+
+const SPACE_REGEX = / /g;
+const WHITESPACE = "\u00a0";
+
+const TokenInProgress: React.FC<TokenProps> = (props) => {
+  const { token } = props;
+  const { currentCharacter, cursorIsLit } = useGame();
+  useBlinking();
+  if (token.text === "\n") {
+    return <NewlineToken />;
+  }
+  if (token.syntax === "WHITESPACE") {
+    return <WhitespaceToken {...props} />;
+  }
+  const [before, current, after] = splitAtNum(
+    token.text.replace(SPACE_REGEX, WHITESPACE),
+    currentCharacter
+  );
+  return (
+    <>
+      <span className="code">{before}</span>
+      <span className={`code ${cursorIsLit ? "lit" : ""}`}>{current}</span>
+      <span className="code">{after}</span>
+      <style jsx>
+        {`
+          .code {
+            font-family: monospace;
+            font-size: 16px;
+          }
+          .lit {
+            background-color: white;
+            color: black;
           }
         `}
       </style>
@@ -43,7 +122,7 @@ const TokenUntouched: React.FC<TokenProps> = (props) => {
   const shouldUseSyntaxClassname =
     token.syntax === "WHITESPACE" ||
     currentLine > lineNumber ||
-    currentToken > tokenNumber;
+    (currentLine === lineNumber && currentToken > tokenNumber);
 
   classNames.push(shouldUseSyntaxClassname ? token.syntax : "UNTYPED");
 
@@ -59,7 +138,7 @@ const TokenUntouched: React.FC<TokenProps> = (props) => {
           color: #bbbbbb;
         }
         .WHITESPACE {
-          margin-right: ${token.text.length * 8}px;
+          margin-right: ${token.text.length * 8.5}px;
         }
         .IDENTIFIER {
           color: white;
