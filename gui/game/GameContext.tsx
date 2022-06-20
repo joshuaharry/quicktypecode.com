@@ -3,8 +3,6 @@
 // in this file.
 import React from "react";
 import { init, reduce, Game, Action } from "./gameLogic";
-import { tokenize } from './tokenize';
-import { Language } from './supportedLanguages';
 
 const GameStateContext = React.createContext<Game | null>(null);
 
@@ -28,24 +26,9 @@ export const useDispatch = (): React.Dispatch<Action> => {
   return ctx;
 };
 
-export interface GameProps {
-  language: Language;
-  code: string;
-}
-
-const GameProvider: React.FC<
-  GameProps & { children: React.ReactNode }
-> = (props) => {
-  const { children, code, language } = props;
-  const tokens = React.useMemo(() => {
-    return tokenize(code, language);
-  }, [language, code]);
-  const [game, dispatch] = React.useReducer(reduce, {
-    ...init,
-    language,
-    code,
-    tokens,
-  });
+const GameProvider: React.FC<{ children: React.ReactNode }> = (props) => {
+  const { children } = props;
+  const [game, dispatch] = React.useReducer(reduce, init);
   return (
     <GameStateContext.Provider value={game}>
       <GameDispatchContext.Provider value={dispatch}>

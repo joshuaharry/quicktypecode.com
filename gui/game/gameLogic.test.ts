@@ -1,4 +1,4 @@
-import { init, reduce, scoreGame, Game } from "./gameLogic";
+import { init, reduce, scoreGame, Game, isInProgress } from "./gameLogic";
 import { tokenize } from "./tokenize";
 
 const TEST_CODE = `def hello
@@ -16,11 +16,25 @@ const simulateTyping = (characters: string): Game => {
     (acc, el) =>
       reduce(acc, {
         type: "USER_TYPED",
-        payload: { character: el, time: acc.lastTyped + 1 },
+        payload: {
+          character: el,
+          time: Number.isNaN(acc.lastTyped) ? 1 : acc.lastTyped + 1,
+        },
       }),
     EXAMPLE
   );
 };
+
+describe("Determining if the game is in progress", () => {
+  test("Works on our initial state", () => {
+    expect(isInProgress(init)).toBe(false);
+  });
+  test("Works on state in progress", () => {
+    const res = simulateTyping("def");
+    console.log(res);
+    expect(isInProgress(res)).toBe(true);
+  });
+});
 
 describe("Scoring the game", () => {
   test("Works on a simple example", () => {

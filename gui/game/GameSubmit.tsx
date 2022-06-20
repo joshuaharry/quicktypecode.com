@@ -14,7 +14,7 @@ const Score = () => {
   );
 };
 
-const GameButtons = () => {
+const GameSubmit = () => {
   return (
     <div className="flex flex-col items-center w-96 py-2">
       <Score />
@@ -22,4 +22,4 @@ const GameButtons = () => {
   );
 };
 
-export default GameButtons;
+export default GameSubmit;

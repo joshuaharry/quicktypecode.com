@@ -1,13 +1,15 @@
 import React from "react";
 import GameContext, { GameProps } from "./GameContext";
 import GameShell from "./GameShell";
-import GameButtons from './GameButtons'
+import GameControls from './GameControls';
+import GameSubmit from './GameSubmit'
 
 const Game: React.FC<GameProps> = (props) => {
   return (
     <GameContext {...props}>
+      <GameControls />
       <GameShell />
-      <GameButtons />
+      <GameSubmit />
     </GameContext>
   );
 };

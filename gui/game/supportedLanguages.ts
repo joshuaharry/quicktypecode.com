@@ -1,1 +1,3 @@
-export type Language = "RUBY" | "PYTHON" | "C";
+export const LANGUAGES = ["RUBY", "PYTHON", "C"];
+
+export type Language = typeof LANGUAGES[number];

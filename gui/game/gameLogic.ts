@@ -1,7 +1,10 @@
 import produce from "immer";
-import keywords from "./keywords";
-import { TokenMatrix } from "./tokenize";
+import { tokenize, TokenMatrix } from "./tokenize";
 import { Language } from "./supportedLanguages";
+
+const codeString = `def hello
+  puts "Hello, world!"
+end`;
 
 export interface Game {
   code: string;
@@ -17,9 +20,9 @@ export interface Game {
 }
 
 export const init: Game = {
-  code: "",
+  code: codeString,
   language: "RUBY",
-  tokens: [],
+  tokens: tokenize(codeString, "RUBY"),
   gameFinished: false,
   lastTyped: NaN,
   startedTyping: NaN,
@@ -39,21 +42,24 @@ export const scoreGame = (game: Game): number => {
     for (let i = 0; i < line.length; ++i) {
       const token = line[i];
       if (i === 0 && token.text.includes(" ")) {
-	continue;
+        continue;
       }
       numTokens += 1;
     }
   }
   const timeElapsed = game.lastTyped - game.startedTyping;
   return (numTokens / timeElapsed) * 60_000;
-}
+};
+
+export const isInProgress = (game: Game): boolean =>
+  !(game.gameFinished || Number.isNaN(game.startedTyping));
 
 export let reduce = (prev: Game, action: Action): Game => {
   switch (action.type) {
     case "BLINK_REQUEST": {
       return produce(prev, (draft) => {
         const neverTyped = Number.isNaN(draft.startedTyping);
-	if (neverTyped) return;
+        if (neverTyped) return;
         const havePausedTyping =
           Math.abs(action.payload - draft.lastTyped) > 600;
         if (neverTyped || havePausedTyping) {
@@ -88,9 +94,9 @@ export let reduce = (prev: Game, action: Action): Game => {
           draft.currentToken = draft.tokens[draft.currentLine].findIndex(
             (x) => !x.text.includes(" ")
           );
-	  return;
+          return;
         }
-	draft.currentLine += 1;
+        draft.currentLine += 1;
         draft.gameFinished = true;
       });
     }
