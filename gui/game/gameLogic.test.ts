@@ -1,4 +1,4 @@
-import { init, reduce, Game } from "./gameLogic";
+import { init, reduce, scoreGame, Game } from "./gameLogic";
 import { tokenize } from "./tokenize";
 
 const TEST_CODE = `def hello
@@ -21,6 +21,32 @@ const simulateTyping = (characters: string): Game => {
     EXAMPLE
   );
 };
+
+describe("Scoring the game", () => {
+  test("Works on a simple example", () => {
+    const game: Game = {
+      ...init,
+      gameFinished: true,
+      tokens: [
+        [
+          { syntax: "IDENTIFIER", text: "foo" },
+          { syntax: "WHITESPACE", text: " " },
+          { syntax: "IDENTIFIER", text: "bar" },
+        ],
+        [
+          { syntax: "WHITESPACE", text: " " },
+          {
+            syntax: "IDENTIFIER",
+            text: "foo",
+          },
+        ],
+      ],
+      startedTyping: 0,
+      lastTyped: 60_000,
+    };
+    expect(scoreGame(game)).toEqual(4);
+  });
+});
 
 describe("Our reducer", () => {
   test("If the user hasn't typed yet, the cursor is lit", () => {
