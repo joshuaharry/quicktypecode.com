@@ -37,7 +37,7 @@ describe("Our game context", () => {
       return <h1>Hi!</h1>;
     };
     render(
-      <GameContext language="RUBY" code="">
+      <GameContext>
         <ShouldNotThrow />
       </GameContext>
     );

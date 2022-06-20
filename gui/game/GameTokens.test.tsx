@@ -24,7 +24,7 @@ describe("Splitting a token at a number", () => {
 describe("Our game shell", () => {
   test("Renders without carashing", () => {
     render(
-      <GameContext code={'puts "hello"'} language="RUBY">
+      <GameContext>
         <GameTokens />
       </GameContext>
     );
