@@ -8,6 +8,10 @@ class Challenge < ApplicationRecord
     except = config[:except]
     return nil unless language
 
-    raise 'UNIMPLEMENTED'
+    if except.nil?
+      where(language: language).order(Arel.sql('RANDOM()')).first
+    else
+      where(language: language).where.not(id: except).order(Arel.sql('RANDOM()')).first
+    end
   end
 end

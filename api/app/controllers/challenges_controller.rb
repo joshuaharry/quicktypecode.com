@@ -3,6 +3,6 @@ class ChallengesController < ApplicationController
     challenge = Challenge.random(language: params[:language], except: params[:except])
     return render status: 404 unless challenge
 
-    render JSON challenge
+    render json: challenge
   end
 end

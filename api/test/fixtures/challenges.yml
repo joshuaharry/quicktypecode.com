@@ -1,9 +1,21 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  language: MyString
-  code: MyString
+  name: 'Say Hello'
+  language: RUBY
+  code: 'puts "Hello!"'
 
 two:
-  language: MyString
-  code: MyString
+  name: 'Say Goodbye'
+  language: RUBY
+  code: 'puts "Goodbye!"'
+
+three:
+  name: 'Say Potato'
+  language: RUBY
+  code: 'puts "Potato!"'
+
+four:
+  name: 'Say Python'
+  language: Python
+  code: 'print("hi")'  
