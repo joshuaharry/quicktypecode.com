@@ -82,7 +82,7 @@ const WHITESPACE = "\u00a0";
 const TokenInProgress: React.FC<TokenProps> = (props) => {
   const { token } = props;
   const { currentCharacter, cursorIsLit } = useGame();
-  // useBlinking();
+  useBlinking();
   if (token.text === "\n") {
     return <NewlineToken />;
   }

@@ -76,16 +76,36 @@ describe("Our reducer", () => {
   });
   test("We can populate a new game after fetching one", () => {
     const first = reduce(EXAMPLE, { type: "FETCHING_NEW_GAME" });
-    const second = reduce(first, { type: 'INITIALIZE_NEW_GAME', payload: {
-      code: 'puts "Hi!"',
-      id: 2,
-      language: 'RUBY'
-    }});
+    const second = reduce(first, {
+      type: "INITIALIZE_NEW_GAME",
+      payload: {
+        code: 'puts "Hi!"',
+        id: 2,
+        language: "RUBY",
+      },
+    });
     expect(second.code).toEqual('puts "Hi!"');
     expect(second.id).toEqual(2);
-    expect(second.language).toEqual('RUBY');
-    expect(second.tokens).toEqual(tokenize('puts "Hi!"', 'RUBY'));
+    expect(second.language).toEqual("RUBY");
+    expect(second.tokens).toEqual(tokenize('puts "Hi!"', "RUBY"));
     expect(second.loadingNewGame).toBe(false);
+  });
+  test("We reset all of the state once we fetch a new game", () => {
+    const first = simulateTyping(TEST_CODE + "\n");
+    const res = reduce(first, {
+      type: "INITIALIZE_NEW_GAME",
+      payload: {
+        code: 'puts "Hi!"',
+        id: 2,
+        language: "RUBY",
+      },
+    });
+    expect(res.currentCharacter).toBe(0);
+    expect(res.currentLine).toBe(0);
+    expect(res.currentToken).toBe(0);
+    expect(Number.isNaN(res.lastTyped)).toBe(true);
+    expect(Number.isNaN(res.startedTyping)).toBe(true);
+    expect(res.gameFinished).toBe(false);
   });
   test("If the user hasn't typed yet, the cursor is lit", () => {
     const first = reduce(init, { type: "BLINK_REQUEST", payload: 0 });

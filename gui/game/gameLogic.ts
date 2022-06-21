@@ -75,8 +75,14 @@ export let reduce = (prev: Game, action: Action): Game => {
         draft.id = action.payload.id;
         draft.language = action.payload.language;
         draft.code = action.payload.code;
-	draft.tokens = tokenize(action.payload.code, action.payload.language);
+        draft.tokens = tokenize(action.payload.code, action.payload.language);
         draft.loadingNewGame = false;
+        draft.currentCharacter = 0;
+        draft.currentToken = 0;
+        draft.currentLine = 0;
+        draft.startedTyping = NaN;
+        draft.lastTyped = NaN;
+        draft.gameFinished = false;
       });
     }
     case "FETCHING_NEW_GAME": {
