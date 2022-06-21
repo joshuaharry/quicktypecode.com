@@ -38,6 +38,55 @@ describe("Tokenization", () => {
     }
     expect(match[0]).toEqual(first);
   });
+  test("Works with less than/greater than/pound", () => {
+    expect(() => tokenize("#include <stdio.h>", "C")).not.toThrow();
+  });
+  test("Works with []", () => {
+    expect(() => tokenize("x[3]", "C")).not.toThrow();
+  });
+  test("Works with math operators", () => {
+    expect(() => tokenize("x + y", "C")).not.toThrow();
+  });
+  test("Works with logical and and or", () => {
+    expect(() => tokenize("x && y", "C")).not.toThrow();
+    expect(() => tokenize("x || y", "C")).not.toThrow();
+  });
+  test("Works with assignment", () => {
+    expect(() => tokenize("x = 4", "C")).not.toThrow();
+  });
+  test("Works with factorial", () => {
+    const factorial = `int factorial(int n) {
+  if (n < 0 || n > 12) return -1;
+  int ans = 1;
+  for (int i = 1; i <= n; ++i) {
+    ans *= i;
+  }
+  return ans;
+}`;
+    expect(() => tokenize(factorial, "C")).not.toThrow();
+  });
+  test("Works with is_prime", () => {
+    const isPrime = `def is_prime(num):
+    if num < 2:
+        return False
+    if num == 2:
+        return True
+    top = math.ceil(math.sqrt(num))
+    for i in range(2, top + 1):
+        if num % i == 0:
+            return False
+    return True`;
+    expect(() => tokenize(isPrime, "PYTHON")).not.toThrow();
+  });
+  test("Works with an if statement", () => {
+    const code = `
+  q (|| f`;
+    expect(() => tokenize(code, "C")).not.toThrow();
+  });
+  test("Works with @ symbol", () => {
+    expect(() => tokenize("@articles", "RUBY")).not.toThrow();
+    expect(() => tokenize("@articles = Foo.new", "RUBY")).not.toThrow();
+  });
   test("Fails on an illegal character", () => {
     const code = `42 – 13;`;
     const language = "RUBY";

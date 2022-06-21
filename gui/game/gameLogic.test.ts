@@ -31,7 +31,6 @@ describe("Determining if the game is in progress", () => {
   });
   test("Works on state in progress", () => {
     const res = simulateTyping("def");
-    console.log(res);
     expect(isInProgress(res)).toBe(true);
   });
 });
@@ -63,6 +62,31 @@ describe("Scoring the game", () => {
 });
 
 describe("Our reducer", () => {
+  test("We can go into loading mode", () => {
+    const first = reduce(init, { type: "FETCHING_NEW_GAME" });
+    expect(first.loadingNewGame).toBe(true);
+  });
+  test("While we are in loading mode, we can't update the game", () => {
+    const first = reduce(EXAMPLE, { type: "FETCHING_NEW_GAME" });
+    const second = reduce(first, {
+      payload: { character: "d", time: first.lastTyped + 1 },
+      type: "USER_TYPED",
+    });
+    expect(second.currentCharacter).toBe(0);
+  });
+  test("We can populate a new game after fetching one", () => {
+    const first = reduce(EXAMPLE, { type: "FETCHING_NEW_GAME" });
+    const second = reduce(first, { type: 'INITIALIZE_NEW_GAME', payload: {
+      code: 'puts "Hi!"',
+      id: 2,
+      language: 'RUBY'
+    }});
+    expect(second.code).toEqual('puts "Hi!"');
+    expect(second.id).toEqual(2);
+    expect(second.language).toEqual('RUBY');
+    expect(second.tokens).toEqual(tokenize('puts "Hi!"', 'RUBY'));
+    expect(second.loadingNewGame).toBe(false);
+  });
   test("If the user hasn't typed yet, the cursor is lit", () => {
     const first = reduce(init, { type: "BLINK_REQUEST", payload: 0 });
     expect(first.cursorIsLit).toBe(true);
@@ -82,6 +106,13 @@ describe("Our reducer", () => {
   test("Typing causes the cursor to be lit", () => {
     const first = reduce(
       { ...EXAMPLE, cursorIsLit: false },
+      { type: "USER_TYPED", payload: { character: "c", time: 1000 } }
+    );
+    expect(first.cursorIsLit).toBe(true);
+  });
+  test("Typing does nothing if we're loading a new game", () => {
+    const first = reduce(
+      { ...EXAMPLE, cursorIsLit: true, loadingNewGame: true },
       { type: "USER_TYPED", payload: { character: "c", time: 1000 } }
     );
     expect(first.cursorIsLit).toBe(true);

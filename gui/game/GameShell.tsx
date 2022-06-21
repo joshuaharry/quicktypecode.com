@@ -23,7 +23,7 @@ const GameShell = () => {
   const ref = React.useRef<null | HTMLTextAreaElement>(null);
   const dispatch = useDispatch();
   return (
-    <div className="w-96 h-96 relative">
+    <div className="width h-96 relative">
       <textarea
         value=""
         ref={ref}
@@ -45,6 +45,14 @@ const GameShell = () => {
         <LineNumbers />
         <GameTokens />
       </div>
+      <style jsx>
+        {`
+          .width {
+            width: 600px;
+            overflow-x: scroll;
+          }
+        `}
+      </style>
     </div>
   );
 };

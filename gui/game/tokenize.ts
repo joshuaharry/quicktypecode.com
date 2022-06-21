@@ -43,8 +43,17 @@ export const PATTERNS = {
   NEWLINE: /^\n/g,
   LEFT_BRACKET: /^\{/g,
   RIGHT_BRACKET: /^\}/g,
+  LEFT_SQUARE: /^\[/g,
+  RIGHT_SQUARE: /^\]/g,
+  LESS_THAN: /^\</g,
+  GREATER_THAN: /^\>/g,
+  POUND: /^#/g,
   COMMA: /^,/g,
+  DOT: /^\./g,
   COLON: /^:/g,
+  AT: /^@/g,
+  LOGIC: /^[&|]/g,
+  MATH: /^(=|-|\+|\%)/g,
   SEMICOLON: /^;/g,
   LEFT_PAREN: /^\(/g,
   RIGHT_PAREN: /^\)/g,
@@ -66,7 +75,7 @@ export type TokenMatrix = Array<Array<Token>>;
 export const tokenize = (code: string, language: Language): TokenMatrix => {
   const out: TokenMatrix = [];
   const lines = code.split("\n");
-  for (let line of lines) {
+  for (let line of lines) {    
     const tokens: Array<Token> = [];
     while (line !== "") {
       let match: string | null = null;

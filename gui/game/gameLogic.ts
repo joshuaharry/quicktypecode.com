@@ -6,7 +6,14 @@ const codeString = `def hello
   puts "Hello, world!"
 end`;
 
+export interface FetchedGame {
+  id: number;
+  code: string;
+  language: Language;
+}
+
 export interface Game {
+  id: number;
   code: string;
   language: Language;
   gameFinished: boolean;
@@ -17,9 +24,12 @@ export interface Game {
   currentToken: number;
   currentCharacter: number;
   tokens: TokenMatrix;
+  loadingNewGame: boolean;
+  loadedGameError: string;
 }
 
 export const init: Game = {
+  id: 1,
   code: codeString,
   language: "RUBY",
   tokens: tokenize(codeString, "RUBY"),
@@ -30,11 +40,15 @@ export const init: Game = {
   currentToken: 0,
   currentCharacter: 0,
   cursorIsLit: true,
+  loadingNewGame: false,
+  loadedGameError: "",
 };
 
 export type Action =
+  | { type: "FETCHING_NEW_GAME" }
   | { type: "BLINK_REQUEST"; payload: number }
-  | { type: "USER_TYPED"; payload: { character: string; time: number } };
+  | { type: "USER_TYPED"; payload: { character: string; time: number } }
+  | { type: "INITIALIZE_NEW_GAME"; payload: FetchedGame };
 
 export const scoreGame = (game: Game): number => {
   let numTokens = 0;
@@ -56,6 +70,20 @@ export const isInProgress = (game: Game): boolean =>
 
 export let reduce = (prev: Game, action: Action): Game => {
   switch (action.type) {
+    case "INITIALIZE_NEW_GAME": {
+      return produce(prev, (draft) => {
+        draft.id = action.payload.id;
+        draft.language = action.payload.language;
+        draft.code = action.payload.code;
+	draft.tokens = tokenize(action.payload.code, action.payload.language);
+        draft.loadingNewGame = false;
+      });
+    }
+    case "FETCHING_NEW_GAME": {
+      return produce(prev, (draft) => {
+        draft.loadingNewGame = true;
+      });
+    }
     case "BLINK_REQUEST": {
       return produce(prev, (draft) => {
         const neverTyped = Number.isNaN(draft.startedTyping);
@@ -70,7 +98,7 @@ export let reduce = (prev: Game, action: Action): Game => {
     case "USER_TYPED": {
       return produce(prev, (draft) => {
         draft.lastTyped = action.payload.time;
-        if (draft.gameFinished) return;
+        if (draft.gameFinished || draft.loadingNewGame) return;
         const haveNotTyped = Number.isNaN(draft.startedTyping);
         if (haveNotTyped) {
           draft.startedTyping = action.payload.time;

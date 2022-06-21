@@ -51,7 +51,6 @@ def hello_world():
     language: 'PYTHON',
     code: %(
 import math
-
 def is_prime(num):
     if num < 2:
         return False
