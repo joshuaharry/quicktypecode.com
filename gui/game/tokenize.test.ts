@@ -7,6 +7,25 @@ const matchString = (check: string) => {
 };
 
 describe("Tokenization", () => {
+  test("Works consistently on a Python program", () => {
+    const str = `
+import math
+
+def is_prime(num):
+    if num < 2:
+        return False
+    if num == 2:
+        return True
+    top = math.ceil(math.sqrt(num))
+    for i in range(2, top + 1):
+        if num % i == 0:
+            return False
+    return True`;
+    const initLength = tokenize(str, 'PYTHON').length;
+    for (let i = 0; i < 10; ++i) {
+      expect(tokenize(str, 'PYTHON').length).toEqual(initLength);
+    }
+  });
   test("Strings can be single quotes, double quotes, or back quotes", () => {
     expect(matchString(`"This is a test"`)).not.toBe(null);
     expect(matchString(`'This is a test'`)).not.toBe(null);

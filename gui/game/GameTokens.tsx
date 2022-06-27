@@ -115,7 +115,7 @@ const TokenInProgress: React.FC<TokenProps> = (props) => {
 };
 
 const TokenUntouched: React.FC<TokenProps> = (props) => {
-  const { currentLine, currentToken } = useGame();
+  const { currentLine, currentToken, tokens } = useGame();
   const { lineNumber, token, tokenNumber } = props;
   const classNames = ["code"];
 
@@ -126,9 +126,15 @@ const TokenUntouched: React.FC<TokenProps> = (props) => {
 
   classNames.push(shouldUseSyntaxClassname ? token.syntax : "UNTYPED");
 
+  const atAnEmptyNewline =
+    tokens[lineNumber].length === 1 &&
+    tokens[lineNumber][tokenNumber].text === "\n";
+
+  const text = atAnEmptyNewline ? "\u00a0" : token.text;
+
   return (
     <>
-      <span className={classNames.join(" ")}>{token.text}</span>
+      <span className={classNames.join(" ")}>{text}</span>
       <style jsx>{`
         .code {
           font-family: monospace;
