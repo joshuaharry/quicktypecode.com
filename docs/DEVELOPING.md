@@ -37,7 +37,7 @@ That will spin up four processes:
 - A GUI server with hot reloading for React.
 - An API server that changes when you edit files for Ruby.
 - A testing process that will run `./bin/rails test` whenever you edit Ruby files.
-- A testing process that will run `jest --watch` inside the GUI directory.,
+- A testing process that will run `jest --watch` inside the GUI directory.
 
 All of the outputs will be nicely colored in a terminal for you.
 
