@@ -75,7 +75,7 @@ export type TokenMatrix = Array<Array<Token>>;
 export const tokenize = (code: string, language: Language): TokenMatrix => {
   const out: TokenMatrix = [];
   const lines = code.split("\n");
-  for (let line of lines) {    
+  for (let line of lines) {
     const tokens: Array<Token> = [];
     while (line !== "") {
       let match: string | null = null;

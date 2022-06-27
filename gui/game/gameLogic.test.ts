@@ -36,28 +36,25 @@ describe("Determining if the game is in progress", () => {
 });
 
 describe("Scoring the game", () => {
-  test("Works on a simple example", () => {
+  test("Works on a simple example with no indents", () => {
     const game: Game = {
       ...init,
       gameFinished: true,
-      tokens: [
-        [
-          { syntax: "IDENTIFIER", text: "foo" },
-          { syntax: "WHITESPACE", text: " " },
-          { syntax: "IDENTIFIER", text: "bar" },
-        ],
-        [
-          { syntax: "WHITESPACE", text: " " },
-          {
-            syntax: "IDENTIFIER",
-            text: "foo",
-          },
-        ],
-      ],
+      code: "abcde",
       startedTyping: 0,
       lastTyped: 60_000,
     };
-    expect(scoreGame(game)).toEqual(4);
+    expect(scoreGame(game)).toEqual(1);
+  });
+  test("Works when there are indents", () => {
+    const game: Game = {
+      ...init,
+      gameFinished: true,
+      code: "a\n  bcd",
+      startedTyping: 0,
+      lastTyped: 60_000,
+    };
+    expect(scoreGame(game)).toEqual(1);
   });
 });
 

@@ -7,9 +7,9 @@ const Score = () => {
   if (!gameFinished) return null;
   return (
     <h1>
-      You typed{" "}
+      You typed about{" "}
       <span className="font-extrabold">{Math.floor(scoreGame(game))}</span>{" "}
-      tokens per minute. Good job!
+      words per minute. Good job!
     </h1>
   );
 };
