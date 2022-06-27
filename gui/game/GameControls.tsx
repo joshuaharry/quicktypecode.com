@@ -11,13 +11,17 @@ export type ChallengeFetcher = (config: {
   except: number;
 }) => Promise<void>;
 
-interface UrlConfig {
-  language: string;
-  except: string;
-}
-
-const asString = (arg: undefined | string | string[]): string | null => {
-  return typeof arg !== "string" || arg === "" ? null : arg;
+const readParamsFromUrl = (): { language: string; id: number } | null => {
+  if (typeof window === undefined) return null;
+  const search = window.location.search;
+  const queryParams: Record<string, string> = {};
+  for (const el of search.substring(1, search.length).split("&")) {
+    const [key, value] = el.split("=");
+    queryParams[key] = value;
+  }
+  const language: string = queryParams["language"] || "RUBY";
+  const id: number = Number.parseInt(queryParams["id"], 10) || 1;
+  return { language, id };
 };
 
 const useFetchNewChallenge = (): ChallengeFetcher => {
@@ -37,33 +41,42 @@ const useFetchNewChallenge = (): ChallengeFetcher => {
             newLanguage === oldLanguage ? `&except=${except}` : ""
           }`
         );
+        if (!res.ok) {
+          throw new Error("FAILED TO FETCH GAME");
+        }
         const newGame = (await res.json()) as FetchedGame;
+
         dispatch({ type: "INITIALIZE_NEW_GAME", payload: newGame });
-        router.push(`/?language=${newGame.language}&except=${newGame.id}`);
+        router.push(`/?language=${newGame.language}&id=${newGame.id}`);
       } catch (err) {
-        console.log(err);
+        dispatch({ type: "CANCEL_FETCH" });
       }
     },
     [dispatch, router]
   );
 
-  React.useEffect(
-    function syncURLToGameStateOnMountEffect() {
-      if (typeof window === undefined) return;
-      const search = window.location.search;
-      const queryParams: Record<string, string> = {};
-      for (const el of search.substring(1, search.length).split("&")) {
-        const [key, value] = el.split("=");
-        queryParams[key] = value;
+  React.useEffect(() => {
+    async function fetchNewGameWhenNecessary() {
+      const urlParams = readParamsFromUrl();
+      if (urlParams === null) return;
+      const { language: urlLanguage, id: urlId } = urlParams;
+      if (urlLanguage === language && id === urlId) return;
+      dispatch({ type: "FETCHING_NEW_GAME" });
+      try {
+        const res = await window.fetch(
+          `${process.env.NEXT_PUBLIC_API_PATH}/challenges/by-id?language=${urlLanguage}&id=${urlId}`
+        );
+        if (!res.ok) {
+          throw new Error("FAILED TO FETCH NEW GAME");
+        }
+        const newGame = (await res.json()) as FetchedGame;
+        dispatch({ type: "INITIALIZE_NEW_GAME", payload: newGame });
+      } catch (err) {
+        dispatch({ type: "CANCEL_FETCH" });
       }
-      const urlLanguage: string = queryParams["language"] || "RUBY";
-      const exceptNum: number = Number.parseInt(queryParams["except"], 10) || 1;
-      if (urlLanguage !== language || exceptNum !== id) {
-	console.log('Fetch the game!');
-      }
-    },
-    [id, language]
-  );
+    }
+    fetchNewGameWhenNecessary();
+  }, [id, language, dispatch]);
 
   return fetcher;
 };

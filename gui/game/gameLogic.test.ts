@@ -71,6 +71,10 @@ describe("Our reducer", () => {
     });
     expect(second.currentCharacter).toBe(0);
   });
+  test("We can cancel loading mode", () => {
+    const first = reduce(init, { type: 'CANCEL_FETCH' });
+    expect(first.loadingNewGame).toBe(false);
+  });
   test("We can populate a new game after fetching one", () => {
     const first = reduce(EXAMPLE, { type: "FETCHING_NEW_GAME" });
     const second = reduce(first, {

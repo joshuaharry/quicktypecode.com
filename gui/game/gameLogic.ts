@@ -48,7 +48,8 @@ export type Action =
   | { type: "FETCHING_NEW_GAME" }
   | { type: "BLINK_REQUEST"; payload: number }
   | { type: "USER_TYPED"; payload: { character: string; time: number } }
-  | { type: "INITIALIZE_NEW_GAME"; payload: FetchedGame };
+  | { type: "INITIALIZE_NEW_GAME"; payload: FetchedGame }
+  | { type: "CANCEL_FETCH" };
 
 export const scoreGame = (game: Game): number => {
   const timeElapsed = game.lastTyped - game.startedTyping;
@@ -85,6 +86,11 @@ export let reduce = (prev: Game, action: Action): Game => {
     case "FETCHING_NEW_GAME": {
       return produce(prev, (draft) => {
         draft.loadingNewGame = true;
+      });
+    }
+    case "CANCEL_FETCH": {
+      return produce(prev, (draft) => {
+        draft.loadingNewGame = false;
       });
     }
     case "BLINK_REQUEST": {

@@ -5,4 +5,11 @@ class ChallengesController < ApplicationController
 
     render json: challenge
   end
+
+  def by_id
+    challenge = Challenge.find_by(id: params[:id])
+    return render status: 404 unless challenge
+
+    render json: challenge
+  end
 end

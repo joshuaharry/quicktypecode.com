@@ -18,4 +18,16 @@ class ChallengesControllerTest < ActionDispatch::IntegrationTest
     body = JSON.parse(response.body)
     assert_not body['id'] == id
   end
+  test 'We can fetch a specific challenge by id' do
+    id = Challenge.all.where(language: 'RUBY').first.id
+    get "/challenges/by-id?language=RUBY&id=#{id}"
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert body['id'] == id
+  end
+  test 'We get a 404 when the challenge does not exist' do
+    id = 'NaN'
+    get "/challenges/by-id?language=RUBY&id=#{id}"
+    assert_response :not_found
+  end
 end
