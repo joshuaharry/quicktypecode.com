@@ -28,7 +28,8 @@ const useBlinking = () => {
 };
 
 const NewlineToken = () => {
-  const { cursorIsLit } = useGame();
+  const { cursorIsLit, tokens, currentLine } = useGame();
+  const marginLeft = tokens[currentLine].length === 1 ? 0 : 8;
   return (
     <>
       <span className={`code ${cursorIsLit ? "lit" : ""}`}>↩︎</span>
@@ -37,7 +38,7 @@ const NewlineToken = () => {
           .code {
             font-family: monospace;
             font-size: 16px;
-            margin-left: 8px;
+            margin-left: ${marginLeft}px;
           }
           .lit {
             background-color: white;
